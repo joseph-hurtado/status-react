@@ -71,6 +71,14 @@
                        :params [nil group-name (into [] selected-contacts)]
                        :on-success #(re-frame/dispatch [::chat-updated %])}]}))
 
+(fx/defn create-from-link
+  [cofx {:keys [chat-id invitation-admin chat-name]}]
+  (if (get-in cofx [:db :chats chat-id])
+    (models.chat/navigate-to-chat cofx chat-id)
+    {::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "createGroupChatFromInvitationLink")
+                       :params [chat-name chat-id invitation-admin]
+                       :on-success #(re-frame/dispatch [::chat-updated %])}]}))
+
 (fx/defn make-admin
   [{:keys [db] :as cofx} chat-id member]
   {::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "addAdminsToGroupChat")
@@ -84,12 +92,29 @@
                      :params [nil current-chat-id selected-participants]
                      :on-success #(re-frame/dispatch [::chat-updated %])}]})
 
+(fx/defn add-members-from-invitation
+  "Add members to a group chat"
+  {:events [:group-chats.ui/add-members-from-invitation]}
+  [{{:keys [current-chat-id] :as db} :db :as cofx} id participant]
+  {:db (update db :group-chat/invitations dissoc id)
+   ::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "addMembersToGroupChat")
+                     :params [nil current-chat-id [participant]]
+                     :on-success #(re-frame/dispatch [::chat-updated %])}]})
+
 (fx/defn leave
   "Leave chat"
   {:events [:group-chats.ui/leave-chat-confirmed]}
   [{:keys [db] :as cofx} chat-id]
   {::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "leaveGroupChat")
                      :params [nil chat-id true]
+                     :on-success #(re-frame/dispatch [::chat-updated %])}]})
+
+(fx/defn remove
+  "Remove chat"
+  {:events [:group-chats.ui/remove-chat-confirmed]}
+  [{:keys [db] :as cofx} chat-id]
+  {::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "removeGroupChat")
+                     :params [chat-id]
                      :on-success #(re-frame/dispatch [::chat-updated %])}]})
 
 (defn- valid-name? [name]
@@ -104,3 +129,39 @@
      ::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "changeGroupChatName")
                        :params [nil chat-id new-name]
                        :on-success #(re-frame/dispatch [::chat-updated %])}]}))
+
+(fx/defn membership-retry
+  {:events [:group-chats.ui/membership-retry]}
+  [{{:keys [current-chat-id] :as db} :db}]
+  {:db (assoc-in db [:chat/memberships current-chat-id :retry?] true)})
+
+(fx/defn membership-message
+  {:events [:group-chats.ui/update-membership-message]}
+  [{{:keys [current-chat-id] :as db} :db} message]
+  {:db (assoc-in db [:chat/memberships current-chat-id :message] message)})
+
+(fx/defn send-group-chat-membership-request
+  "Send group chat membership request"
+  {:events [:send-group-chat-membership-request]}
+  [{{:keys [current-chat-id chats] :as db} :db :as cofx}]
+  (let [{:keys [invitation-admin]} (get chats current-chat-id)
+        message (get-in db [:chat/memberships current-chat-id :message])]
+    {:db (assoc-in db [:chat/memberships current-chat-id] nil)
+     ::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "sendGroupChatInvitationRequest")
+                       :params [nil current-chat-id invitation-admin message]
+                       :on-success #(re-frame/dispatch [:transport/invitation-sent %])}]}))
+
+(fx/defn send-group-chat-membership-rejection
+  "Send group chat membership rejection"
+  {:events [:send-group-chat-membership-rejection]}
+  [cofx invitation-id]
+  {::json-rpc/call [{:method (json-rpc/call-ext-method (waku/enabled? cofx) "sendGroupChatInvitationRejection")
+                     :params [nil invitation-id]
+                     :on-success #(re-frame/dispatch [:transport/invitation-sent %])}]})
+
+(fx/defn handle-invitations
+  [{db :db} invitations]
+  {:db (update db :group-chat/invitations #(reduce (fn [acc {:keys [id] :as inv}]
+                                                     (assoc acc id inv))
+                                                   %
+                                                   invitations))})
