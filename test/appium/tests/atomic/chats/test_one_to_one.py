@@ -344,6 +344,47 @@ class TestMessagesOneToOneChatMultiple(MultipleDeviceTestCase):
 
         self.errors.verify_no_errors()
 
+    @marks.testrail_id(6305)
+    @marks.critical
+    def test_send_audio_message_with_pn_check(self):
+        self.create_drivers(2)
+        device_1, device_2 = SignInView(self.drivers[0]), SignInView(self.drivers[1])
+        home_1, home_2 = device_1.create_user(), device_2.create_user(enable_notifications=True)
+        profile_1 = home_1.profile_button.click()
+        default_username_1 = profile_1.default_username_text.text
+        home_1 = profile_1.get_back_to_home_view()
+        public_key_2 = home_2.get_public_key_and_username()
+
+        home_2.just_fyi("Put app on background (to check Push notification received for audio message)")
+        home_2.click_system_home_button()
+
+        home_2.just_fyi("Sending audio message to device who is on background")
+        chat_1 = home_1.add_contact(public_key_2)
+        ####
+        chat_1.audio_message_button.click()
+        chat_1.record_audio_message(message_length_in_seconds=125)
+        if not chat_1.element_by_text("Maximum recording time reached").is_element_displayed():
+            self.drivers[0].fail("Exceeded 2 mins limit of recording time.")
+        else:
+            chat_1.ok_button.click()
+        if chat_1.audio_message_recorded_time.text != "1:59":
+            self.errors.append("Timer exceed 2 minutes")
+        chat_1.send_message_button.click()
+
+        device_2.open_notification_bar()
+        chat_2 = home_2.click_upon_push_notification_by_text("audio message")
+
+        ####
+        chat_2.play_audio_message()
+        ####
+
+
+
+
+
+        self.errors.verify_no_errors()
+
+
     @marks.testrail_id(5316)
     @marks.critical
     def test_add_to_contacts(self):
