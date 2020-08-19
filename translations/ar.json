@@ -314,6 +314,7 @@
     "dapps-permissions": "أذونات DApp",
     "dark": "داكن",
     "data": "البيانات",
+    "data-syncing": "مزامنة البيانات",
     "datetime-ago": "منذ",
     "datetime-ago-format": "{{number}} {{time-intervals}} {{ago}}",
     "datetime-day": {
@@ -770,7 +771,6 @@
     "message-not-sent": "لم يتم إرسال الرسالة",
     "message-options-cancel": "إلغاء",
     "message-reply": "الرد",
-    "message-syncing": "لم يتم إرسال الرسالة",
     "messages": "رسائل",
     "might-break": "قد كسر بعض ÐApps",
     "migrations-failed-content": "{{message}} \n إصدار المخطط: الأولي {{initial-version}} ، الحالي {{current-version}}الاخير ، {{last-version}} \n\nحدث خطأ في قاعدة البيانات. أموالك ومفتاح الدردشة آمنان. لا يمكن استعادة البيانات الأخرى ، مثل الدردشات وجهات الاتصال الخاصة بك. \" {{erase-multiaccounts-data-button-text}} \"  سيزيل جميع البيانات الأخرى ويسمح لك بالوصول إلى أموالك وإرسال الرسائل.",

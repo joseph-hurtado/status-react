@@ -734,7 +734,6 @@
     "message-not-sent": "Mensaje no enviado",
     "message-options-cancel": "Cancelar",
     "message-reply": "Responder",
-    "message-syncing": "Sincronización de mensajes",
     "messages": "Mensajes",
     "might-break": "Puede que se rompan algunas ÐApps",
     "migrations-failed-content": "{{message}} \n versión del esquema: inicial {{initial-version}}, actual {{current-version}} , último {{last-version}} \n\nOcurrió un problema de base de datos. Tus fondos y la llave de chat están a salvo. Otros datos, como chats y contactos, no se podrán recuperar. Presionar el botón {{erase-multiaccounts-data-button-text}}\" eliminará el resto de datos y te permitirá acceder a tus fondos y enviar mensajes.",

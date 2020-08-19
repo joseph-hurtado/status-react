@@ -708,7 +708,6 @@
     "message-not-sent": "Mesaj gönderilmedi",
     "message-options-cancel": "İptal",
     "message-reply": "Cevap",
-    "message-syncing": "Mesaj senkronizasyonu",
     "messages": "Mesajlar",
     "might-break": "Biraz ÐApps'ı kırabilir ",
     "migrations-failed-content": "{{message}} \n şema sürümü: ilk {{initial-version}} , geçerli {{current-version}} , son {{last-version}} \n\n Bir veritabanı hatası oluştu. Paranız ve sohbet anahtarınız güvende. Sohbetleriniz ve kişileriniz gibi diğer veriler geri yüklenemez. \" {{erase-multiaccounts-data-button-text}} \" \"düğmesi diğer tüm verileri kaldırır ve paranıza erişmenize ve mesaj göndermenize olanak tanır.",

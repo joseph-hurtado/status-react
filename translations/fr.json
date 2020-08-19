@@ -734,7 +734,6 @@
     "message-not-sent": "Message non envoyé",
     "message-options-cancel": "Annuler",
     "message-reply": "Répondre",
-    "message-syncing": "Synchronisation des messages",
     "messages": "Messages",
     "might-break": "Peut casser quelques ÐApps",
     "migrations-failed-content": "{{message}}\nversion du schéma : initiale {{initial-version}}, actuelle {{current-version}}, dernière {{last-version}}\n\nUne erreur de base de données s’est produite. Vos fonds et votre clé de chat sont en sécurité. D’autres données, comme vos conversations et vos contacts, ne peuvent pas être restaurées. Le bouton « {{erase-multiaccounts-data-button-text}} » supprime toutes les autres données et vous permet d’accéder à vos fonds et d’envoyer des messages.",

@@ -734,7 +734,6 @@
     "message-not-sent": "Nachricht nicht gesendet",
     "message-options-cancel": "Abbrechen",
     "message-reply": "Antworten",
-    "message-syncing": "Nachrichtensynchronisierung",
     "messages": "Nachrichten",
     "might-break": "Könnte einige ÐApps kaputtmachen",
     "migrations-failed-content": "{{message}}\nSchemaversion: Anfängliche {{initial-version}}, Aktuelle {{current-version}}, Letzte {{last-version}}\n\nEin Datenbankfehler ist aufgetreten. Ihr Guthaben und Ihr Chat-Schlüssel sind sicher. Andere Daten, wie Ihre Chats und Kontakte, können nicht wiederhergestellt werden. Die Schaltfläche \"{{erase-multiaccounts-data-button-text}}\" entfernt alle anderen Daten und ermöglicht Ihnen den Zugriff auf Ihr Guthaben und das Senden von Nachrichten.",

@@ -738,7 +738,6 @@
     "message-not-sent": "Mensagem não enviada",
     "message-options-cancel": "Cancelar",
     "message-reply": "Responder",
-    "message-syncing": "Sincronização de mensagens",
     "messages": "Mensagens",
     "might-break": "Pode quebrar alguns ÐApps",
     "migrations-failed-content": "{{message}} \n versão do esquema: inicial {{initial-version}} , atual {{current-version}} , última {{last-version}} \n\nOcorreu um erro no banco de dados. Seus fundos e chave de bate-papo estão seguros. Outros dados, como bate-papos e contatos, não podem ser restaurados. O {{erase-multiaccounts-data-button-text}} \" {{erase-multiaccounts-data-button-text}} \" irá remover todos os outros dados e permitir que você acesse seus fundos e envie mensagens.",

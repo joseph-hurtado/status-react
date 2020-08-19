@@ -770,7 +770,6 @@
     "message-not-sent": "Hindi ipinadala ang mensahe",
     "message-options-cancel": "Pagkansela",
     "message-reply": "Sagot",
-    "message-syncing": "Pag-sync ng mensahe",
     "messages": "mensahe",
     "might-break": "Maaaring masira ang ilang ÐApps",
     "migrations-failed-content": "{{message}}\nschema version: paunang{{initial-version}},kasalukuyang{{current-version}},huli{{last-version}}\n\nNagkaroon ng isang error sa database. Ang iyong funds at chat key ay ligtas. Ang iba pang data, kagaya ng iyong chats at mga contacts, ay hindi maibabalik. \"{{erase-multiaccounts-data-button-text}}\" button, aalisin ang lahat ng iba pang data at magpapahintulot sa iyo na ma-access ang iyong mga pondo at magpadala ng mga mensahe.",

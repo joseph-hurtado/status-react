@@ -734,7 +734,6 @@
     "message-not-sent": "Messaggio non inviato",
     "message-options-cancel": "Annulla",
     "message-reply": "Rispondi",
-    "message-syncing": "Sincronizzazione dei messaggi",
     "messages": "Messaggi",
     "might-break": "Potrebbe rompere alcune ÐApps",
     "migrations-failed-content": "{{message}} \n versione dello schema: iniziale {{initial-version}} , attuale {{current-version}} , ultima {{last-version}} \n\nC'è stato un errore sul database. I tuoi fondi e le chiavi sono al sicuro. Altri dati, come le tue chat la tua lista di contatti, non possono essere recuperati. Premendo \"{{erase-multiaccounts-data-button-text}} \" tutti i tuoi dati saranno cancellati ma potrai nuovamente accedere ai tuoi fondi e ricominciare a chattare.",
