@@ -81,12 +81,15 @@
 
 (fx/defn add-contact
   "Add a contact and set pending to false"
-  [{:keys [db] :as cofx} public-key]
+  [{:keys [db] :as cofx} public-key nickname]
   (when (not= (get-in db [:multiaccount :public-key]) public-key)
-    (let [contact (-> (get-in db [:contacts/contacts public-key]
-                              (build-contact cofx public-key))
-                      (update :system-tags
-                              (fnil #(conj % :contact/added) #{})))]
+    (let [contact (cond-> (get-in db [:contacts/contacts public-key]
+                                  (build-contact cofx public-key))
+                    nickname
+                    (assoc :nickname nickname)
+                    :else
+                    (update :system-tags
+                            (fnil #(conj % :contact/added) #{})))]
       (fx/merge cofx
                 {:db (dissoc db :contacts/new-identity)}
                 (upsert-contact contact)
@@ -179,3 +182,13 @@
                              :ens-verified    true})}
 
             (upsert-contact {:public-key public-key})))
+
+(fx/defn update-nickname
+  {:events [:contacts/update-nickname]}
+  [{:keys [db] :as cofx} public-key nickname]
+  (fx/merge cofx
+            {:db (update-in db [:contacts/contacts public-key]
+                            merge
+                            {:nickname nickname})}
+            (upsert-contact {:public-key public-key})
+            (navigation/navigate-back)))

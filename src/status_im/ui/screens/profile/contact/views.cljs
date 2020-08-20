@@ -9,8 +9,13 @@
             [status-im.ui.components.react :as react]
             [status-im.ui.screens.profile.components.sheets :as sheets]
             [status-im.ui.screens.profile.contact.styles :as styles]
-            [status-im.utils.gfycat.core :as gfy]
-            [status-im.utils.utils :as utils])
+            [status-im.utils.utils :as utils]
+            [status-im.ui.components.topbar :as topbar]
+            [status-im.ui.components.colors :as colors]
+            [status-im.ui.components.toolbar :as toolbar]
+            [status-im.ui.components.keyboard-avoid-presentation :as kb-presentation]
+            [reagent.core :as reagent]
+            [clojure.string :as string])
   (:require-macros [status-im.utils.views :as views]))
 
 (defn actions
@@ -68,6 +73,25 @@
        (i18n/label :t/profile-details)]]
      [render-detail contact]]))
 
+(defn render-chat-settings [{:keys [names]}]
+  [quo/list-item
+   {:title               (i18n/label :t/nickname)
+    :size                :small
+    :accessibility-label :profile-nickname-item
+    :accessory           :text
+    :accessory-text      (:nickname names)
+    :on-press            #(re-frame/dispatch [:navigate-to :nickname])
+    :chevron             true}])
+
+(defn chat-settings [contact]
+  (when (:added? contact)
+    [react/view
+     [quo/list-header
+      [quo/text {:accessibility-label :chat-settings
+                 :color               :inherit}
+       (i18n/label :t/chat-settings)]]
+     [render-chat-settings contact]]))
+
 ;; TODO: List item
 (defn block-contact-action [{:keys [blocked? public-key]}]
   [react/touchable-highlight {:on-press (if blocked?
@@ -84,10 +108,49 @@
       (i18n/label :t/unblock-contact)
       (i18n/label :t/block-contact))]])
 
+(defn save-nickname [public-key nickname]
+  (re-frame/dispatch [:contacts/update-nickname public-key nickname]))
+
+(defn valid-nickname? [nickname]
+  (not (string/blank? nickname)))
+
+(defn- nickname-input [nickname entered-nickname public-key]
+  [quo/text-input
+   {:on-change-text      #(reset! entered-nickname %)
+    :on-submit-editing   #(when (valid-nickname? @entered-nickname)
+                            (save-nickname public-key @entered-nickname))
+    :auto-capitalize     :none
+    :auto-focus          false
+    :accessibility-label :nickname-input
+    :default-value       nickname
+    :placeholder         (i18n/label :t/nickname)
+    :return-key-type     :done
+    :auto-correct        false}])
+
+(views/defview nickname []
+  (views/letsubs [{:keys [public-key names]} [:contacts/current-contact]
+                  entered-nickname (reagent/atom "")]
+    [kb-presentation/keyboard-avoiding-view {:style {:flex 1}}
+     [topbar/topbar {:title    (i18n/label :t/nickname)
+                     :subtitle (or (:ens-name names) (:three-words-name names))
+                     :modal?   true}]
+     [react/view {:flex 1 :padding 16}
+      [nickname-input (:nickname names) entered-nickname public-key]
+      [react/text {:style {:margin-top 16 :color colors/gray}}
+       (i18n/label :t/nickname-description)]]
+     [toolbar/toolbar {:show-border? true
+                       :center
+                       [quo/button
+                        {:type     :secondary
+                         :disabled (not (valid-nickname? @entered-nickname))
+                         :on-press #(save-nickname public-key @entered-nickname)}
+                        (i18n/label :t/done)]}]]))
+
 (views/defview profile []
   (views/letsubs [{:keys [ens-verified name public-key]
                    :as   contact}  [:contacts/current-contact]]
-    (let [on-share #(re-frame/dispatch [:show-popover (merge
+    (let [[first-name second-name] (multiaccounts/contact-two-names contact true)
+          on-share #(re-frame/dispatch [:show-popover (merge
                                                        {:view    :share-chat-key
                                                         :address public-key}
                                                        (when (and ens-verified name)
@@ -105,11 +168,9 @@
                                 :on-press            #(re-frame/dispatch [:navigate-back])}]
            :extended-header   (profile-header/extended-header
                                {:on-press on-share
-                                :title    (multiaccounts/displayed-name contact)
+                                :title    first-name
                                 :photo    (multiaccounts/displayed-photo contact)
-                                :subtitle (if (and ens-verified public-key)
-                                            (gfy/generate-gfy public-key)
-                                            public-key)})}
+                                :subtitle second-name})}
 
           [react/view {:padding-top 12}
            (for [{:keys [label subtext accessibility-label icon action disabled?]} (actions contact)]
@@ -123,7 +184,6 @@
                                :disabled            disabled?
                                :on-press            action}]))]
           [react/view styles/contact-profile-details-container
-           [profile-details (cond-> contact
-                              (and ens-verified name)
-                              (assoc :ens-name name))]]
+           [profile-details contact]
+           [chat-settings contact]]
           [block-contact-action contact]]]))))
